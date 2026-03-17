@@ -12,16 +12,3 @@ def menu():
     print(f"2. {VERDE}Mostrar inventario{BLANCO}")
     print(f"3. {VERDE}Calcular estadisticas{BLANCO}")
     print(f"4. {ROJO}Salir{BLANCO}")
-    
-
-def registrar_inventario(descripcion):
-    """
-    Agrega una descripción de operación al historial.
-    """
-    inventario.append(descripcion)
-
-def inventario():
-    print(f"{VERDE}╔══════════╗")
-    print(f"║{BLANCO}INVENTARIO{VERDE}║")
-    print(f"╚══════════╝{VERDE}\n")
-    

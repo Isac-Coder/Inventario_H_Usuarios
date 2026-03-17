@@ -13,7 +13,7 @@ import archivos as arch
 
 def mostrar_menu():
     """Imprime el menú de opciones en la consola."""
-    print("\n--- MENÚ DE GESTIÓN DE INVENTARIO ---")
+    print("\n--- MENÚ DE GESTIÓN DE INVENTARIO ---\n")
     print("1. Agregar producto")
     print("2. Mostrar inventario")
     print("3. Buscar producto")

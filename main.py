@@ -1,0 +1,38 @@
+from funciones import *
+from colores import *
+
+limpiar_pantalla()
+
+
+
+continuar = "no"
+inventario = []
+
+while continuar == "no":
+    try:
+        opcion = int(input("Ingrese una opción: "))
+
+        if opcion == 1:
+            limpiar_pantalla()
+            nombre = input("Ingrese el nombre del producto: ")
+            precio = float(input("Ingrese el precio del producto: "))
+            cantidad = int(input("Ingrese la cantidad del producto: "))
+            inventario.append({"nombre": nombre, "precio": precio, "cantidad": cantidad})
+            print("Producto agregado con éxito")
+            input("Presione enter para continuar")
+            limpiar_pantalla()
+
+        elif opcion == 2:
+            print(inventario)
+
+        elif opcion == 3:
+            print()
+
+        elif opcion == 4:
+            continuar = input("(si/no): ")
+            limpiar_pantalla()
+
+        else:
+            print("Opción inválida")
+    except ValueError:
+        print("Opción inválida")

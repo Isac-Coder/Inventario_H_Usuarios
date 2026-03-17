@@ -4,7 +4,6 @@ inventario = []
 def limpiar_pantalla():
     import os
     os.system('cls' if os.name == 'nt' else 'clear')
-    menu()
 
 def menu():
     print(f"{BLANCO}BIENVENIDO AL INVENTARIO{BLANCO}\n")

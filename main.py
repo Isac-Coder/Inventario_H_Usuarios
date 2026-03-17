@@ -3,39 +3,36 @@ from colores import *
 
 limpiar_pantalla()
 
-def registrar_operacion(productos):
-    """
-    Agrega una descripción de operación al historial.
-    """
-    productos.append(productos)
 
 continuar = "no"
-inventario = {}
-i = 0
+inventario = []
 
 while continuar == "no":
     try:
-        opcion = int(input("Ingrese una opción: "))
+        menu()
+        opcion = int(input("\nIngrese una opción:\n# "))
 
         if opcion == 1:
             limpiar_pantalla()
-            nombre = input("Ingrese el nombre del producto: ")
-            precio = float(input("Ingrese el precio del producto: "))
-            cantidad = int(input("Ingrese la cantidad del producto: "))
-            registrar_operacion(f"el producto {(nombre)}. con precio de: $ {precio} y cantidad de: {cantidad}")
+            producto = input("\nIngrese el nombre del producto:\n# ")
+            limpiar_pantalla()
+            precio = float(input("\nIngrese el precio del producto:\n# "))
+            limpiar_pantalla()
+            cantidad = int(input("\nIngrese la cantidad del producto:\n# "))
+            
+            nuevo_producto = {"nombre": producto, "precio": precio, "cantidad": cantidad}
+            inventario.append(nuevo_producto)
+            
             print("Producto agregado con éxito")
             input("Presione enter para continuar")
             limpiar_pantalla()
 
         elif opcion == 2:
-            
-            if not inventario:
-                print("No hay productos en el inventario")
-            else:
-                print("Inventario:")
-                for i, productos in enumerate(inventario):
-                    print(f"{i}. {productos}")
-            input("Presione enter para continuar")
+            limpiar_pantalla()
+            print("\nInventario:\n")
+            for i, producto in enumerate(inventario, 1):
+                print(f"{i}. Producto: {producto['nombre']} | Precio: {producto['precio']} | Cantidad: {producto['cantidad']}")
+            input("\nPresione enter para continuar")
             limpiar_pantalla()
 
 
@@ -43,10 +40,12 @@ while continuar == "no":
             print()
 
         elif opcion == 4:
-            continuar = input("(si/no): ")
+            continuar = input("¿Está seguro de que desea salir? (si/no): ")
             limpiar_pantalla()
 
         else:
             print("Opción inválida")
     except ValueError:
         print("Opción inválida")
+        input("Presione enter para continuar")
+        limpiar_pantalla()

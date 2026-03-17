@@ -9,6 +9,7 @@ además de visualizar estadísticas del inventario.
 
 # Importamos las funciones del módulo de servicios
 import servicios as srv
+import archivos as arch
 
 def mostrar_menu():
     """Imprime el menú de opciones en la consola."""
@@ -19,7 +20,9 @@ def mostrar_menu():
     print("4. Actualizar producto")
     print("5. Eliminar producto")
     print("6. Mostrar estadísticas del inventario")
-    print("7. Salir")
+    print("7. Guardar inventario en CSV")
+    print("8. Cargar inventario desde CSV")
+    print("9. Salir")
     print("------------------------------------")
 
 def ejecutar_agregar_producto(inventario):
@@ -97,15 +100,58 @@ def ejecutar_mostrar_estadisticas(inventario):
     print("\n-> Estadísticas del Inventario")
     stats = srv.calcular_estadisticas(inventario)
     if stats:
-        print(f"  - Número total de tipos de productos: {stats['numero_tipos_productos']}")
-        print(f"  - Cantidad total de unidades: {stats['cantidad_total_unidades']}")
-        print(f"  - Valor total del inventario: ${stats['valor_total_inventario']:.2f}")
-        print(f"  - Precio promedio ponderado: ${stats['precio_promedio_ponderado']:.2f}")
+        print(f"  - Unidades totales: {stats['unidades_totales']}")
+        print(f"  - Valor total del inventario: ${stats['valor_total']:.2f}")
         print(f"  - Producto más caro: {stats['producto_mas_caro']['nombre']} (${stats['producto_mas_caro']['precio']:.2f})")
-        print(f"  - Producto más barato: {stats['producto_mas_barato']['nombre']} (${stats['producto_mas_barato']['precio']:.2f})")
+        print(f"  - Producto con mayor stock: {stats['producto_mayor_stock']['nombre']} ({stats['producto_mayor_stock']['cantidad']} unidades)")
     else:
         print("El inventario está vacío, no se pueden calcular estadísticas.")
 
+def ejecutar_guardar_inventario(inventario):
+    """Solicita ruta y guarda el inventario."""
+    print("\n-> Guardar Inventario")
+    ruta = input("Introduce la ruta/nombre del archivo (ej. inventario.csv): ")
+    arch.guardar_csv(inventario, ruta)
+
+def ejecutar_cargar_inventario(inventario):
+    """Gestiona la carga de inventario desde CSV."""
+    print("\n-> Cargar Inventario")
+    ruta = input("Introduce la ruta del archivo CSV a cargar: ")
+    
+    cargados, invalidos = arch.cargar_csv(ruta)
+    
+    if cargados is None:
+        return # Error crítico al abrir/leer archivo
+
+    print(f"\nProductos válidos detectados: {len(cargados)}")
+    if invalidos > 0:
+        print(f"Filas inválidas omitidas: {invalidos}")
+
+    if not cargados:
+        print("No se encontraron productos válidos para importar.")
+        return
+
+    while True:
+        resp = input("¿Sobrescribir inventario actual? (S/N): ").lower()
+        if resp in ['s', 'n']:
+            break
+    
+    accion = ""
+    if resp == 's':
+        inventario.clear()
+        inventario.update(cargados)
+        accion = "Reemplazo total"
+    else:
+        accion = "Fusión"
+        for nombre, datos in cargados.items():
+            if nombre in inventario:
+                inventario[nombre]['cantidad'] += datos['cantidad']
+                inventario[nombre]['precio'] = datos['precio'] # Actualiza precio al nuevo
+            else:
+                inventario[nombre] = datos
+    
+    print(f"\nOperación completada: {accion}.")
+    print(f"Estado actual: {len(inventario)} tipos de productos en inventario.")
 
 def main():
     """Función principal que ejecuta el bucle de la aplicación."""
@@ -116,7 +162,7 @@ def main():
     # Bucle principal de la aplicación
     while True:
         mostrar_menu()
-        opcion = input("Selecciona una opción (1-7): ")
+        opcion = input("Selecciona una opción (1-9): ")
 
         if opcion == '1':
             ejecutar_agregar_producto(inventario)
@@ -131,10 +177,14 @@ def main():
         elif opcion == '6':
             ejecutar_mostrar_estadisticas(inventario)
         elif opcion == '7':
+            ejecutar_guardar_inventario(inventario)
+        elif opcion == '8':
+            ejecutar_cargar_inventario(inventario)
+        elif opcion == '9':
             print("\nGracias por usar el sistema. ¡Adiós!")
             break
         else:
-            print("\nOpción no válida. Por favor, elige una opción del 1 al 7.")
+            print("\nOpción no válida. Por favor, elige una opción del 1 al 9.")
         
         # Pausa para que el usuario pueda leer la salida antes de mostrar el menú de nuevo
         input("\nPulsa Enter para continuar...")

@@ -1,0 +1,140 @@
+DOCUMENTACIÓN TÉCNICA DEL SISTEMA DE INVENTARIO
+=================================================
+
+Este documento explica detalladamente el funcionamiento de cada módulo del sistema.
+El proyecto está dividido en capas para mantener el código organizado:
+1. Lógica de Negocio (servicios.py)
+2. Persistencia de Datos (archivos.py)
+3. Interfaz de Usuario (app.py)
+4. Punto de Entrada (Validación_Condicionales.py)
+
+--------------------------------------------------------------------------------
+1. MÓDULO: servicios.py
+--------------------------------------------------------------------------------
+Este archivo contiene la "inteligencia" del programa. Manipula directamente el
+diccionario del inventario pero NO interactúa con el usuario (no tiene input()).
+
+- agregar_producto(inventario, nombre, precio, cantidad):
+  Recibe los datos crudos. Primero valida que los tipos sean correctos (que precio
+  no sea negativo, etc.).
+  Usa `nombre.strip().title()` para estandarizar (ej: "  manzana " -> "Manzana").
+  Si el producto ya existe en el diccionario, suma la cantidad a la existente.
+  Si no existe, crea una nueva entrada en el diccionario.
+
+- mostrar_inventario(inventario):
+  Recorre el diccionario con un bucle `for`.
+  Usa "f-strings" con formato (ej: `:<20`, `:>10`) para alinear el texto en columnas
+  y que se vea como una tabla ordenada en la consola.
+
+- buscar_producto(inventario, nombre):
+  Usa el método `.get()` de los diccionarios. Es más seguro que usar corchetes []
+  porque si el producto no existe, devuelve `None` en lugar de causar un error.
+
+- actualizar_producto(inventario, nombre, ...):
+  Permite cambiar precio o cantidad.
+  Primero verifica si el producto existe. Luego, solo actualiza los campos que
+  no sean `None`. Esto permite actualizar solo el precio sin tocar la cantidad,
+  y viceversa.
+
+- eliminar_producto(inventario, nombre):
+  Usa la instrucción `del inventario[nombre]` para borrar la clave del diccionario.
+  Devuelve True si se borró, False si no existía.
+
+- calcular_estadisticas(inventario):
+  Realiza cálculos matemáticos sobre los datos:
+  1. Usa una función `lambda` para calcular el subtotal (precio * cantidad) al vuelo.
+  2. Usa `sum()` para totales.
+  3. Usa `max()` con el argumento `key` para encontrar el producto más caro comparando
+     solo el campo 'precio' de cada producto.
+  Retorna un diccionario con los resultados listos para imprimir.
+
+--------------------------------------------------------------------------------
+2. MÓDULO: archivos.py
+--------------------------------------------------------------------------------
+Este archivo se encarga de guardar y leer datos del disco duro (CSV).
+
+- guardar_csv(inventario, ruta, incluir_header=True):
+  Abre un archivo en modo escritura ('w').
+  Usa el módulo `csv.writer` de Python.
+  Escribe primero una fila de encabezados (nombre, precio, cantidad).
+  Recorre el inventario y escribe una fila por cada producto.
+  Maneja errores como `PermissionError` (si el archivo está abierto en Excel, por ejemplo).
+
+- cargar_csv(ruta):
+  Abre un archivo en modo lectura ('r').
+  Usa `csv.reader` para leer línea por línea.
+  Validaciones importantes:
+    - Verifica que el encabezado sea correcto.
+    - Verifica que cada fila tenga 3 columnas.
+    - Intenta convertir precio a float y cantidad a int.
+  Si una fila está mal, la salta (continue) y suma 1 al contador de errores,
+  pero NO detiene el programa. Esto es robustez.
+  Devuelve dos cosas: el diccionario nuevo cargado y el número de filas inválidas.
+
+--------------------------------------------------------------------------------
+3. MÓDULO: app.py
+--------------------------------------------------------------------------------
+Este archivo maneja la Interfaz de Usuario (UI). Se encarga de los `print` y los
+`input`. Actúa como puente entre el usuario y `servicios.py` o `archivos.py`.
+
+- mostrar_menu():
+  Simplemente imprime las opciones numeradas del 1 al 9.
+
+- ejecutar_agregar_producto(inventario):
+  Pide los datos al usuario.
+  Usa un bloque `try-except ValueError` para capturar si el usuario escribe letras
+  en el precio o cantidad. Si los datos son válidos, llama a `srv.agregar_producto`.
+
+- ejecutar_actualizar_producto(inventario):
+  Pregunta por separado si se quiere actualizar precio o cantidad.
+  Solo pide el nuevo valor si el usuario confirma con 's'.
+
+- ejecutar_mostrar_estadisticas(inventario):
+  Llama a `srv.calcular_estadisticas`. Si recibe datos, los imprime con formato
+  bonito (signos de dólar, decimales).
+
+- ejecutar_cargar_inventario(inventario):
+  Esta es la función más compleja de este módulo.
+  1. Pide la ruta del archivo.
+  2. Llama a `arch.cargar_csv`.
+  3. Si la carga es exitosa, pregunta al usuario: ¿Sobrescribir o Fusionar?
+     - Sobrescribir: Borra todo (`.clear()`) y pone lo nuevo.
+     - Fusionar: Recorre lo cargado y, si el producto ya existe, suma cantidades
+       y actualiza el precio. Si no existe, lo crea.
+
+--------------------------------------------------------------------------------
+4. MÓDULO: Validación_Condicionales.py
+--------------------------------------------------------------------------------
+Este es el Punto de Entrada (Entry Point). Es el archivo que ejecutas para iniciar.
+
+- Importaciones:
+  Importa `servicios` (como srv) y `app` para tener acceso a todo lo anterior.
+
+- main():
+  1. Inicializa el diccionario `inventario = {}`.
+  2. Define una bandera `ejecutando = True` para controlar el bucle principal.
+  3. Inicia un bucle `while ejecutando:` que mantiene el programa vivo.
+
+- Estructura del Bucle:
+  - Muestra el menú (`app.mostrar_menu()`).
+  - Captura la opción del usuario.
+  - Usa una estructura `if/elif/else` para decidir qué función de `app` llamar
+    basándose en el número ingresado.
+
+- Manejo de la Salida (Opción 9):
+  En lugar de usar `break` abruptamente, cambia `ejecutando = False`.
+  Esto permite que el bucle termine de forma natural y limpia.
+
+- Manejo de Errores Global:
+  Todo el bucle está dentro de un `try-except Exception`.
+  Si ocurre un error no previsto en cualquier parte del programa, este bloque
+  lo captura, imprime el error y evita que el programa se cierre de golpe,
+  permitiendo al usuario intentar otra cosa.
+
+- `if __name__ == "__main__":`
+  Esta línea asegura que la función `main()` solo se ejecute si lanzamos este
+  archivo directamente, y no si lo importamos desde otro lado.
+
+=================================================
+FIN DE LA DOCUMENTACIÓN
+=================================================

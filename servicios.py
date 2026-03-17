@@ -141,13 +141,13 @@ def eliminar_producto(inventario, nombre):
 
 def calcular_estadisticas(inventario):
     """
-    Calcula estadísticas básicas sobre el inventario.
+    Calcula estadísticas sobre el inventario.
 
     Calcula:
-    - Valor total del inventario.
-    - Precio promedio por producto.
-    - Cantidad total de productos.
-    - Producto más caro y más barato.
+    - Unidades totales (suma de cantidad).
+    - Valor total (suma de precio * cantidad).
+    - Producto más caro.
+    - Producto con mayor stock.
 
     Args:
         inventario (dict): El inventario de productos.
@@ -158,31 +158,23 @@ def calcular_estadisticas(inventario):
     if not inventario:
         return None
 
-    # Cálculo de métricas
-    valor_total = sum(datos['precio'] * datos['cantidad'] for datos in inventario.values())
-    cantidad_total_productos = sum(datos['cantidad'] for datos in inventario.values())
-    
-    # Maneja el caso de que no haya productos para evitar división por cero
-    if cantidad_total_productos > 0:
-        precio_promedio = valor_total / cantidad_total_productos
-    else:
-        precio_promedio = 0
+    # Lambda para calcular el subtotal de cada producto
+    subtotal = lambda p: p["precio"] * p["cantidad"]
 
-    num_tipos_productos = len(inventario)
+    # Cálculo de métricas solicitadas
+    unidades_totales = sum(datos['cantidad'] for datos in inventario.values())
+    valor_total = sum(subtotal(datos) for datos in inventario.values())
 
-    # Encontrar producto más caro y más barato
-    # Se usa una función lambda como clave para indicar a max/min que comparen por el precio
-    producto_mas_caro = max(inventario.items(), key=lambda item: item[1]['precio'])
-    producto_mas_barato = min(inventario.items(), key=lambda item: item[1]['precio'])
+    # Encontrar productos destacados
+    prod_mas_caro = max(inventario.items(), key=lambda item: item[1]['precio'])
+    prod_mayor_stock = max(inventario.items(), key=lambda item: item[1]['cantidad'])
 
     # Empaquetado de los resultados
     estadisticas = {
-        'valor_total_inventario': valor_total,
-        'precio_promedio_ponderado': precio_promedio,
-        'cantidad_total_unidades': cantidad_total_productos,
-        'numero_tipos_productos': num_tipos_productos,
-        'producto_mas_caro': {'nombre': producto_mas_caro[0], 'precio': producto_mas_caro[1]['precio']},
-        'producto_mas_barato': {'nombre': producto_mas_barato[0], 'precio': producto_mas_barato[1]['precio']}
+        'unidades_totales': unidades_totales,
+        'valor_total': valor_total,
+        'producto_mas_caro': {'nombre': prod_mas_caro[0], 'precio': prod_mas_caro[1]['precio']},
+        'producto_mayor_stock': {'nombre': prod_mayor_stock[0], 'cantidad': prod_mayor_stock[1]['cantidad']}
     }
 
     return estadisticas

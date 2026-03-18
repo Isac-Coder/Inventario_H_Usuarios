@@ -2,8 +2,9 @@ from colores import *
 
 inventario = []
 
-inventario = []
-
+def cargando():
+    import time
+    
 
 def limpiar_pantalla():
     import os
@@ -38,7 +39,20 @@ def mostrar_inventario():
         print(f"{i}. Producto: {producto['nombre']} | Precio: {producto['precio']} | Cantidad: {producto['cantidad']}")
     input("\nPresione enter para continuar")
     limpiar_pantalla()
-
-def salir():
-    continuar = input("¿Está seguro de que desea salir? (si/no): ")
+    
+def calcular_estadisticas():
+    limpiar_pantalla()
+    if not inventario:
+        print("El inventario está vacío. No hay estadísticas para calcular.")
+        input("\nPresione enter para continuar")
+        limpiar_pantalla()
+        return
+        
+    valor_total_inventario = sum(item['precio'] * item['cantidad'] for item in inventario)
+    cantidad_total_productos = sum(item['cantidad'] for item in inventario)
+    
+    print(f"{BLANCO}--- Estadísticas del Inventario ---{BLANCO}\n")
+    print(f"Valor total del inventario: ${valor_total_inventario:,.2f}")
+    print(f"Cantidad total de productos registrados: {cantidad_total_productos}")
+    input("\nPresione enter para continuar")
     limpiar_pantalla()

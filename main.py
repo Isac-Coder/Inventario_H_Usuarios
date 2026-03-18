@@ -19,7 +19,7 @@ while continuar == "no":
             mostrar_inventario()
 
         elif opcion == 3:
-            print()
+            calcular_estadisticas()
 
         elif opcion == 4:
             continuar = input("¿Está seguro de que desea salir? (si/no): ")

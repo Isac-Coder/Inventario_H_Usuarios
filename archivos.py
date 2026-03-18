@@ -4,6 +4,11 @@ Permite guardar y cargar datos desde formatos externos como CSV.
 """
 import csv
 
+def limpiar_pantalla():
+    import os
+    os.system('cls' if os.name == 'nt' else 'clear')
+
+
 def guardar_csv(inventario, ruta, incluir_header=True):
     """
     Guarda el inventario actual en un archivo CSV.

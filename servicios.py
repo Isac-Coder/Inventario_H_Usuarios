@@ -1,16 +1,8 @@
-"""
-Módulo de servicios para la gestión de inventario de una tienda.
-
-Este módulo proporciona funciones para agregar, mostrar, buscar, actualizar,
-eliminar productos y calcular estadísticas sobre el inventario.
-El inventario se representa como un diccionario donde las llaves son los
-nombres de los productos y los valores son otros diccionarios con los
-detalles del producto (precio y cantidad).
-"""
+from archivos import limpiar_pantalla
 
 def agregar_producto(inventario, nombre, precio, cantidad):
     """
-    Agrega un nuevo producto al inventario o actualiza la cantidad si ya existe.
+    Agrega un nuevo producto al inventario o actualiza la cantidad ya existente.
 
     Args:
         inventario (dict): Diccionario que representa el inventario.
@@ -35,13 +27,17 @@ def agregar_producto(inventario, nombre, precio, cantidad):
     nombre = nombre.strip().title() # Estandarizar el nombre
 
     if nombre in inventario:
-        # Si el producto existe, simplemente actualiza la cantidad
+        # Si el producto existe, actualiza la cantidad
         inventario[nombre]['cantidad'] += cantidad
         print(f"Cantidad del producto '{nombre}' actualizada.")
+        input("Pulsa Enter para continuar...")
+        limpiar_pantalla()
     else:
-        # Si es un producto nuevo, lo agrega al inventario
+        # Si es un producto nuevo, lo añade al inventario
         inventario[nombre] = {'precio': precio, 'cantidad': cantidad}
         print(f"Producto '{nombre}' agregado al inventario.")
+        input("Pulsa Enter para continuar...")
+        limpiar_pantalla()
     
     return True
 

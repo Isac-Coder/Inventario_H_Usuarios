@@ -1,7 +1,11 @@
 import servicios as srv
 import app
+from archivos import limpiar_pantalla
+
+
 
 def main():
+    limpiar_pantalla()
     """Bucle principal de la aplicación."""
     inventario = {}
     ejecutando = True

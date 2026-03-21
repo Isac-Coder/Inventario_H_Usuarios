@@ -43,17 +43,10 @@ def pedir_producto():
     nuevo_producto = {"nombre": producto, "precio": precio, "cantidad": cantidad}
     inventario.append(nuevo_producto)
             
-<<<<<<< HEAD
     cargando()
     print("\nProducto agregado con éxito")
     input("Presione enter para continuar. ")
-=======
-    print("Producto agregado con éxito")
-    input("Presione enter para continuar")
-    
-    limpiar_pantalla()
-    cargando()
->>>>>>> 3baae579a06150b06a28d86a32a44c2483fba5d1
+
     limpiar_pantalla()
 
 def mostrar_inventario():
@@ -65,14 +58,7 @@ def mostrar_inventario():
     print("\nInventario:\n")
     for i, producto in enumerate(inventario, 1):
         print(f"{i}. Producto: {producto['nombre']} | Precio: {producto['precio']} | Cantidad: {producto['cantidad']}")
-<<<<<<< HEAD
     input("\nPresione enter para continuar. ")
-=======
-    input("\nPresione enter para continuar")
-    
-    limpiar_pantalla()
-    cargando()
->>>>>>> 3baae579a06150b06a28d86a32a44c2483fba5d1
     limpiar_pantalla()
     
 def calcular_estadisticas():

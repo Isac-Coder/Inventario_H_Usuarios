@@ -6,19 +6,24 @@ limpiar_pantalla()
 
 
 
-
 while continuar == "no":
     try:
         menu()
         opcion = int(input("\nIngrese una opción:\n# "))
 
         if opcion == 1:
+            cargando()
+            limpiar_pantalla()
             pedir_producto()
             
         elif opcion == 2:
+            cargando()
+            limpiar_pantalla()
             mostrar_inventario()
 
         elif opcion == 3:
+            cargando()
+            limpiar_pantalla()
             calcular_estadisticas()
 
         elif opcion == 4:

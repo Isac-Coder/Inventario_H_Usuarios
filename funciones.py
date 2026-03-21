@@ -1,11 +1,16 @@
 from colores import *
+import time
+import random
 
 inventario = []
 
 def cargando():
-    import time
+    print(f"{BLANCO}Cargando", end="")
+    for _ in range(3):
+        time.sleep(random.uniform(0.1, 0.4))
+        print(".", end="", flush=True)
     
-
+    
 def limpiar_pantalla():
     import os
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -28,8 +33,9 @@ def pedir_producto():
     nuevo_producto = {"nombre": producto, "precio": precio, "cantidad": cantidad}
     inventario.append(nuevo_producto)
             
-    print("Producto agregado con éxito")
-    input("Presione enter para continuar")
+    cargando()
+    print("\nProducto agregado con éxito")
+    input("Presione enter para continuar. ")
     limpiar_pantalla()
 
 def mostrar_inventario():
@@ -37,14 +43,14 @@ def mostrar_inventario():
     print("\nInventario:\n")
     for i, producto in enumerate(inventario, 1):
         print(f"{i}. Producto: {producto['nombre']} | Precio: {producto['precio']} | Cantidad: {producto['cantidad']}")
-    input("\nPresione enter para continuar")
+    input("\nPresione enter para continuar. ")
     limpiar_pantalla()
     
 def calcular_estadisticas():
     limpiar_pantalla()
     if not inventario:
         print("El inventario está vacío. No hay estadísticas para calcular.")
-        input("\nPresione enter para continuar")
+        input("\nPresione enter para continuar. ")
         limpiar_pantalla()
         return
         
@@ -54,5 +60,5 @@ def calcular_estadisticas():
     print(f"{BLANCO}--- Estadísticas del Inventario ---{BLANCO}\n")
     print(f"Valor total del inventario: ${valor_total_inventario:,.2f}")
     print(f"Cantidad total de productos registrados: {cantidad_total_productos}")
-    input("\nPresione enter para continuar")
+    input("\nPresione enter para continuar. ")
     limpiar_pantalla()
